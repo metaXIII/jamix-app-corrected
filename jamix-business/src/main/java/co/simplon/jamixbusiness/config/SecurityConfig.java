@@ -3,7 +3,6 @@ package co.simplon.jamixbusiness.config;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,38 +26,29 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")
 public class SecurityConfig {
 
-    @Value("${jamix.bcrypt.rounds}")
-    private int rounds;
+    private final JamixConfiguration jamixConfiguration;
 
-    @Value("${jamix.jwt.secret}")
-    private String secret;
-
-    @Value("${jamix.jwt.exp}")
-    private Long exp;
-
-    @Value("${jamix.jwt.issuer}")
-    private String issuer;
+    public SecurityConfig(JamixConfiguration jamixConfiguration) {
+        this.jamixConfiguration = jamixConfiguration;
+    }
 
     @Bean
     PasswordEncoder encoder() {
-	return new BCryptPasswordEncoder(rounds);
+        return new BCryptPasswordEncoder(jamixConfiguration.bcryptConfiguration().rounds());
     }
 
     @Bean
     JwtProvider jwtProvider() {
-	Algorithm algorithm = Algorithm.HMAC256(secret);
-	return new JwtProvider(algorithm, exp, issuer);
+        Algorithm algorithm = Algorithm.HMAC256(jamixConfiguration.jwtConfiguration().secret());
+        return new JwtProvider(algorithm, jamixConfiguration.jwtConfiguration().exp(), jamixConfiguration.jwtConfiguration().issuer());
     }
 
     @Bean
     JwtDecoder jwtDecoder() {
-	SecretKey secretKey = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-	NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
-
-	OAuth2TokenValidator<Jwt> validator = JwtValidators.createDefaultWithIssuer(issuer);
-	decoder.setJwtValidator(validator);
-
-	return decoder;
+        SecretKey secretKey = new SecretKeySpec(jamixConfiguration.jwtConfiguration().secret().getBytes(), "HmacSHA256");
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
+        OAuth2TokenValidator<Jwt> validator = JwtValidators.createDefaultWithIssuer(jamixConfiguration.jwtConfiguration().issuer());
+        decoder.setJwtValidator(validator);
+        return decoder;
     }
-
 }
