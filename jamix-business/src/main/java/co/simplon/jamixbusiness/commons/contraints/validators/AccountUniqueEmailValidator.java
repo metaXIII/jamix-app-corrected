@@ -9,7 +9,7 @@ public final class AccountUniqueEmailValidator implements ConstraintValidator<Ac
 
     private final AccountRepository repository;
 
-    private AccountUniqueEmailValidator(AccountRepository repository) {
+    protected AccountUniqueEmailValidator(AccountRepository repository) {
 	this.repository = repository;
     }
 
