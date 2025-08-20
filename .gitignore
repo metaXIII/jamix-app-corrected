@@ -1,5 +1,5 @@
 HELP.md
-target/
+jamix-business/target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -41,7 +41,6 @@ mvnw.cmd
 ### app.properties ###
 **/application-test.properties
 **/application-dev.properties
-**/application.properties
 
 ### MIcrosoft ###
 .vscode/
