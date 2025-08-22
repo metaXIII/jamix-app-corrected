@@ -1,5 +1,6 @@
 package co.simplon.jamixbusiness.accounts;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,32 +11,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/account")
 public class AccountController {
-    private final AccountServiceImpl service;
 
-    protected AccountController(AccountServiceImpl service) {
-	this.service = service;
-    }
+  private final AccountServiceImpl service;
 
-    @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    void create(@Valid @RequestBody AccountCreateDto inputs) {
-	service.create(inputs);
-    }
+  protected AccountController(AccountServiceImpl service) {
+    this.service = service;
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody AccountLoginDto inputs) {
-	LoginResponse response = service.authenticated(inputs);
-	return ResponseEntity.ok(response);
-    }
+  @PostMapping("/signup")
+  @ResponseStatus(HttpStatus.CREATED)
+  void create(@Valid @RequestBody AccountCreateDto inputs) {
+    service.create(inputs);
+  }
 
-    @DeleteMapping("/email")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByEmail(@RequestParam String email) {
-	service.deleteByEmail(email);
-    }
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@RequestBody AccountLoginDto inputs) {
+    LoginResponse response = service.authenticated(inputs);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/email")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteByEmail(@RequestParam String email) {
+    service.deleteByEmail(email);
+  }
 }
